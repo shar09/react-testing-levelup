@@ -3,20 +3,28 @@ import axios from "axios";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import ScoopOptions from "./ScoopOptions";
+import AlertBanner from "./AlertBanner";
 
 function Options({ optionType }) {
   const [scoopOptions, setScoopOptions] = useState([]);
   const [toppingOptions, setToppingOptions] = useState([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const getScoopOptions = async () => {
-      const res = await axios.get(`http://localhost:3030/${optionType}`);
-      if (optionType === "scoops") setScoopOptions(res.data);
-      if (optionType === "toppings") setToppingOptions(res.data);
+      try {
+        const res = await axios.get(`http://localhost:3030/${optionType}`);
+        if (optionType === "scoops") setScoopOptions(res.data);
+        if (optionType === "toppings") setToppingOptions(res.data);
+      } catch (err) {
+        setError(true);
+      }
     };
 
     getScoopOptions();
   }, [optionType]);
+
+  if (error) return <AlertBanner />;
 
   return (
     <Container>
